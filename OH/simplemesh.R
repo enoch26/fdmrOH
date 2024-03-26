@@ -13,24 +13,12 @@ ocean_crs <- fm_crs(ocean_sf)
 fm_crs(ocean_sf) <- NULL
 ocean_sf2 <- st_union(st_buffer(ocean_sf, 1))
 
-
-
 ggplot() + geom_sf(data=ocean_sf2)
 
-mesh <- fm_mesh_2d(boundary = oceans.sf)
+ocean_bnd <- 
 
-
-ante_meridian <- -20 ## change as needed
-offset <- ante_meridian+180
-jitter <- 0
-lat <- c(seq(from=-90,to=90,by=0.25))
-lon <- c(rep(offset-jitter,length(lat)),rep(offset+jitter,length(lat)))
-
-oceans.sf <- cbind(lon, c(lat, rev(lat))) %>% st_linestring() %>% st_cast("POLYGON") %>% 
-  st_sfc(crs=4326)
-
+mesh <- fm_mesh_2d(boundary = ocean_sf2, max_edge)
 
 ggplot() + geom_sf(data=oceans.sf)
 
-
-ggplot() + gg(data=oceans.sf) + gg(mesh)
+ggplot() + geom_sf(data=ocean_sf2) + gg(mesh)
