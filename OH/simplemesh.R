@@ -12,32 +12,41 @@ ocean_sf <-
 # ocean_sf <- ocean_sf[as.numeric(st_area(ocean_sf)) > 50000]
 ocean_crs <- fm_crs(ocean_sf) 
 fm_crs(ocean_sf) <- NULL
-ocean_sf2 <- st_union(st_buffer(ocean_sf, 2))
+ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.1))
+ggplot() + geom_sf(data=ocean_sf2)
+
 fm_crs(ocean_sf) <- ocean_crs
+
 ocean_sp <- as_Spatial(ocean_sf)
 # ocean_sp <- sp::as(st_geometry(ocean_sf), "Spatial")
 
-sp::coordinates(ocean_sp) <- c("LONG", "LAT")
-fdmr::mesh_builder(spatial_data = ocean_sf,
-                   x_coord = "LONG",
-                   y_coord = "lat")
+# let say we have random points to get a feeling of the data
+ocean_pts <- st_sample(ocean_sf, size = 20*20,
+                       type = "regular")
+
+ocean_pts_sp <- as_Spatial(ocean_pts)
+
+colnames(ocean_pts_sp@coords) <- c("LONG", "LAT")
+  
+fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
+                   max_edge = 100,
+                   offset = 50,
+                   # crs = fm_crs(ocean_pts_sp),
+                   cutoff = 1)
 
 ocean_bnd <- st_cast(
   st_sf(geometry = fm_nonconvex_hull(ocean_sf2, 5)),
   "POLYGON"
 )
 
-ggplot() + geom_sf(data=ocean_sf2) + geom_sf(ocean_bnd)
+# ggplot() + geom_sf(data=ocean_sf2) + geom_sf(ocean_bnd)
 
 boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
 
-
-
 mesh <- fm_mesh_2d_inla(boundary = boundary,
                         max.edge = c(2, 3),
-                        offset = c(pi, pi),
+                        offset = c(3, 3),
                         cutoff = 1)
 
 ggplot() + geom_sf(data = ocean_sf2) + gg(mesh)
-ggplot() + geom_sf(data = oceans.sf)
 
