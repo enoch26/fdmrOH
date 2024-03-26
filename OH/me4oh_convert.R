@@ -1,0 +1,105 @@
+# Convert ME4OH NetCDF to CSV
+
+library("ncdf4")
+library("tidyverse")
+
+read_var <- function(nc_data, var_name) {  # Read NetCDF variable and preprocess fill values.
+    # Read in the NetCDF variable.
+    var <- ncvar_get(nc_data, var_name)
+    # Replace fill values with NA if fill value is defined.
+    fillvalue <- ncatt_get(nc_data, var_name, "_FillValue")
+    if (fillvalue$hasatt) {
+        var[var==fillvalue$value] <- NA
+    }
+    # Replace any instance of NaN with NA.
+    var[is.nan(var)] <- NA
+
+    # Return the preprocessed variable.
+    return(var)
+
+}
+
+nice_name <- function(nc_data, var_name) {  # Construct a nice name for a variable.
+    name <- ncatt_get(nc_data, var_name, "short_name")$value
+    units <- ncatt_get(nc_data, var_name, "units")$value
+    result <- sprintf("%s (%s)", name, units)
+}
+
+preprocess_me4oh <- function(ncfile) {  # Preprocess ME4OH NetCDF file and return data frame.
+    
+    # Get NetCDF data.
+    our_nc_data <- nc_open(nc_file)
+
+    # Get coordinates (by profile).
+    lat <- ncvar_get(our_nc_data, "en4_lat") # Latitude
+    lon <- ncvar_get(our_nc_data, "en4_lon") # Longitude
+    time <- ncvar_get(our_nc_data, "en4_ymd") # Year, Month, Day
+    decimal_year <- ncvar_get(our_nc_data, "en4_ydec") # Decimal years
+    platform_number <- read_var(our_nc_data, "en4_platform_number") # Platform number
+
+    # Get coordinates (by level)
+    ts_z <- read_var(our_nc_data, "ts_z") # Depth of level.
+
+    # TODO use profile masks by depth.
+    # dohc_mask_by_en4_maxdepth <- ncvar_get(our_nc_data, "dohc_mask_by_en4_maxdepth") # Mask by profile ID by full depth level coverage.
+
+    # Counts of coordinate lengths.
+    number_of_levels <- dim(ts_z)
+    number_of_profiles <- dim(lat)
+
+    # Separate time components.
+    year <- time[1, ]
+    month <- time[2, ]
+    day <- time[3, ]
+
+    # Utility variables to identify profiles or levels by index.
+    number_of_profile <- c(1:number_of_profiles)
+    level <- c(1:number_of_levels)
+
+    # Get sea surface temperature values.
+    sst <- read_var(our_nc_data, "sst")
+    sst_name <- nice_name(our_nc_data, "sst")
+
+    # Data frame of by profile meta data.
+    by_profile_df <- data.frame(cbind(number_of_profile, lat, lon, platform_number, year, month, day, decimal_year, sst))
+
+    # Data fram of by level meta data.
+    by_level_df <- data.frame(cbind(level, ts_z))
+    meta_df <- merge(by_level_df, by_profile_df, by = NULL)
+    
+    # Get profile by level data blocks.
+
+    # Get temperature values.
+    temp <- read_var(our_nc_data, "temp")
+    temp_name <- "potential_temperature (degree Celcius)" # temp_name <- nice_name(our_nc_data, "temp") # set manually as typo in netcdf short name
+
+    # Get salinity values.
+    salt <- read_var(our_nc_data, "salt")
+    salt_name <- nice_name(our_nc_data, "salt")
+
+    # Reshape to 1D and combine into data frame.
+    temp <- as.vector(temp)
+    salt <- as.vector(salt)
+    data_df <- data.frame(cbind(temp, salt))
+    colnames(data_df) <- c(temp_name, salt_name)
+
+    # Merge coordinate meta data with observation values.
+    me4oh_df <- cbind(meta_df, data_df)
+
+    # Drop NA rows.
+    # me4oh_df <- na.omit(me4oh_df)
+
+    # Reorder columns to nicer order.
+    column_order <- c("number_of_profile","platform_number","year","month","day", "decimal_year", "lat","lon","level","ts_z","sst","potential_temperature (degree Celcius)","practical_salinity (psu)")
+    me4oh_df <- me4oh_df[, column_order]
+
+    # Mask to top level only for initial development.
+    me4oh_df <- me4oh_df[me4oh_df$level==1, ]
+
+    return(me4oh_df)
+
+}
+
+nc_file <- "ME4OH/data/en4.1.1/1979-2014/full/update/ofam3-jra55.all.EN.4.1.1.f.profiles.g10.197901.update.extra.nc"
+df <- preprocess_me4oh(nc_file)
+write.csv(df, "me4oh_test.csv", row.names=FALSE)
