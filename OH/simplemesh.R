@@ -44,7 +44,7 @@ ocean_bnd <- st_cast(
 boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
 
 mesh <- fm_mesh_2d_inla(boundary = boundary,
-                        max.edge = c(2, 3),
+                        max.edge = c(5, 7),
                         offset = c(3, 3),
                         cutoff = 1)
 
