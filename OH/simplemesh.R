@@ -12,7 +12,7 @@ ocean_sf <-
 # ocean_sf <- ocean_sf[as.numeric(st_area(ocean_sf)) > 50000]
 ocean_crs <- fm_crs(ocean_sf) 
 fm_crs(ocean_sf) <- NULL
-ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.1))
+ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.05))
 ggplot() + geom_sf(data=ocean_sf2)
 
 fm_crs(ocean_sf) <- ocean_crs
@@ -29,8 +29,8 @@ ocean_pts_sp <- as_Spatial(ocean_pts)
 colnames(ocean_pts_sp@coords) <- c("LONG", "LAT")
   
 fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
-                   max_edge = 100,
-                   offset = 50,
+                   max_edge = c(50,100),
+                   offset = c(50,100),
                    # crs = fm_crs(ocean_pts_sp),
                    cutoff = 1)
 
