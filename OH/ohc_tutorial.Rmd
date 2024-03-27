@@ -78,3 +78,65 @@ mesh <- fm_mesh_2d_inla(boundary = boundary,
 ggplot() + geom_sf(data = ocean_sf2) + gg(mesh)
 ```
 
+## Model
+
+We considered one year of top layer DOHC (between 0 and 306.25 m depth) in 2005. Observations are indexed by the month of occurrence, resulting in 12 indices, which is equal to the number of time points. To pass the data to the function, we created a `SpatialPolygonsDataFrame` from a `data.frame`.
+```{r}
+# Transform latitudes and longtiudes to numeric
+df_f$lat <- base::sapply(df_f$lat, as.numeric)
+df_f$lon <- base::sapply(df_f$lon, as.numeric)
+
+# Add sp coordinates
+sp::coordinates(df_f) <- c('lon', 'lat')
+
+# Determine the group size
+n_time <- base::as.integer(base::length(base::unique(df_f@data$time)))
+
+```
+### Prior selection
+
+To implement the SPDE approach, we defined the range un uncertainty priors. We assume that the probability of process spatial range (physically, a distance where correlation between two observations falls to 0.1) being under 25 degrees in latitude is 0.2. We also set the probability to 0.1 that the marginal standard deviation of the process exceeds 1.
+
+The process is assumed to be evolving temporally as an autoregressive process of the first order (AR1) with the probability of the temporal autocorrelation parameter be over 0 is 0.9.
+
+```{r}
+prior_range <- 25
+prior_Pgt <- 0.2
+  
+# Define the SPDE
+ohc_spde <- INLA::inla.spde2.pcmatern(mesh, prior.range = c(prior_range, prior_Pgt), prior.sigma = c(1, 0.1))
+
+# Define temporal parameter
+rhoprior <- base::list(theta = base::list(prior = 'pccor1', param = c(0, 0.9)))
+```
+
+### Define the model formula
+
+We use a spatio-temporal model with only random effects.
+```{r}
+model_formula <- dohc_L1 ~ -1 + f(
+  main = coordinates,
+  model = ohc_spde,
+  group = time,
+  ngroup = n_time,
+  control.group = list(
+    model = 'ar1',
+    hyper = rhoprior
+  )
+)
+```
+
+### Fit the model
+
+```{r}
+bru_model <- inlabru::bru(model_formula,
+                          data = df_f,
+                          family = "gaussian",
+                          options = list(
+                            verbose = TRUE,
+                            bru_verbose = 4
+                          )
+)
+```
+
+## Output
