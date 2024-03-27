@@ -19,26 +19,26 @@ Here we load the Indian ocean shapefile. We smooth the boundary to make the mesh
 # fdmr::load_tutorial_data(dataset = "indian_ocean", 
 #                          filename = "indian_ocean.rds")
 ocean_sf <-
-  st_read(here::here("indian_ocean.shp"))
+  st_read(here::here("OH","indian_ocean.shp"))
 # ocean_sf <- ocean_sf[as.numeric(st_area(ocean_sf)) > 50000]
 ocean_crs <- fm_crs(ocean_sf) 
 fm_crs(ocean_sf) <- NULL
 ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.05))
 ```
 
-We plot the Indian ocean to check the boundary. 
+We plot the Indian ocean to check if there is any issues. We have removed small islands and we keep Madagasikara.
 ```{r}
 ggplot() + geom_sf(data=ocean_sf2)
 
 ```
 
-We convert into a sp object. 
+We convert into a sp object.
 ```{r}
 fm_crs(ocean_sf) <- ocean_crs
 ocean_sp <- as_Spatial(ocean_sf)
 ```
 
-We regularly sample some points to put in the mesh builder in fdmr package to get a feeling of the parameter setting.
+We regularly sample some points (20$\times$20) to put in the mesh builder function under the fdmr package to get a feeling of the parameter setting for the mesh.
 ```{r}
 ocean_pts <- st_sample(ocean_sf, size = 20*20,
                        type = "regular")
@@ -57,7 +57,7 @@ fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
                    cutoff = 1)
 ```
 
-We create the outer boundary.
+We create the outer boundary. 
 ```{r}
 ocean_bnd <- st_cast(
   st_sf(geometry = fm_nonconvex_hull(ocean_sf2, 5)),
@@ -65,8 +65,7 @@ ocean_bnd <- st_cast(
 )
 ```
 
-
-We create the mesh for the Indian ocean with the outer boundary. The cutoff is to remove small island and we keep Madagasikara. We might do a Barrier model in the future.  
+We create the mesh for the Indian ocean with the outer boundary.  We might do a Barrier model on a sphere in the future.  
 ```{r}
 boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
 
