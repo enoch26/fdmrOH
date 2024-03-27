@@ -3,6 +3,7 @@
 ## Load the dataset
 data_path <- ""
 file_name <- "me4_dohc.2005.rds"
+out_dir <- ""
 df <- readRDS(data_path, file_name)
 
 ## Add variable time
