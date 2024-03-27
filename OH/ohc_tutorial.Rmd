@@ -26,7 +26,7 @@ fm_crs(ocean_sf) <- NULL
 ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.05))
 ```
 
-We plot the Indian ocean to check if there is any issues. We have removed small islands and we keep Madagasikara.
+We plot the Indian ocean to check if there is any issues. 
 ```{r}
 ggplot() + geom_sf(data=ocean_sf2)
 
@@ -65,7 +65,8 @@ ocean_bnd <- st_cast(
 )
 ```
 
-We create the mesh for the Indian ocean with the outer boundary.  We might do a Barrier model on a sphere in the future.  
+We create the mesh for the Indian ocean with the outer boundary.
+We have removed small islands and we keep Madagasikara in the cutoff. We might do a Barrier model on a sphere in the future.  
 ```{r}
 boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
 
