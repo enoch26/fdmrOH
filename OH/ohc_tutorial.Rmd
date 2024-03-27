@@ -48,6 +48,15 @@ to a depth of 306.25 m, multiplied by water density and heat capacity).
 
 The tutorial will use data from the Indian Ocean region. 
 
+```{r}
+library(INLA)
+library(inlabru)
+library(sf)
+library(sp)
+library(ggplot2)
+```
+
+
 ## Loading Data
 Here we load the Indian ocean shapefile. We smooth the boundary to make the mesh creation easier. 
 ```{r}
@@ -112,7 +121,10 @@ mesh <- fm_mesh_2d_inla(boundary = boundary,
                         offset = c(3, 3),
                         cutoff = 1)
 
-ggplot() + geom_sf(data = ocean_sf2) + gg(mesh)
+meshrds <- readRDS("mesh_5_7_1.rds")
+me4 <- readRDS("me4_dohc.2005.indian_ocean.rds")
+me4pts <- st_as_sf(me4, coords=c("lon","lat"))
+ggplot() + geom_sf(data = ocean_sf2) + gg(mesh) + gg(data = me4pts, size=0.1)
 ```
 
 ## Model
@@ -177,3 +189,31 @@ bru_model <- inlabru::bru(model_formula,
 ```
 
 ## Output
+```{r}
+pred <- predict(bru_model)
+
+pred_mean <- pred$Predictor["mean"]
+pred_sd <- pred$Predictor["sd"]
+mthpred <- list()
+sdpred <- list()
+for (i in 1:12) {
+  mthpred[i]<-list(pred_mean[((1+1511*(i-1)):(1511*i)),])
+  sdpred[i]<-list(pred_sd[((1+1511*(i-1)):(1511*i)),])
+}
+
+plot1 <- ggplot()+gg(mesh, color = as.numeric(unlist(mthpred[3]))) +  ggtitle("Mean March") + scale_fill_gradientn(name = "drhc (TJ/m^-2)",colours = c('navyblue', 'darkmagenta', 'darkorange1'), limits = c(0.33, 0.38)) + theme(legend.position="bottom", axis.title.x=element_blank(), axis.title.y=element_blank()) 
+plot2 <- ggplot()+gg(mesh, color = as.numeric(unlist(mthpred[10]))) +  ggtitle("Mean October") + scale_fill_gradientn(name = "drhc (TJ/m^-2)",colours = c('navyblue', 'darkmagenta', 'darkorange1'), limits = c(0.33, 0.38)) +  theme(legend.position = "bottom", axis.title.x=element_blank(), axis.title.y=element_blank())
+grid.arrange(plot1, plot2, ncol=2)  
+
+plot1 <- ggplot()+gg(mesh, color = as.numeric(unlist(sdpred[3]))) +  ggtitle("Std March") + scale_fill_gradientn(name = "drhc (TJ/m^-2)",colours = c('navyblue', 'darkmagenta', 'darkorange1'), limits = c(0, 0.005)) + theme(legend.position="bottom", axis.title.x=element_blank(), axis.title.y=element_blank()) 
+plot2 <- ggplot()+gg(mesh, color = as.numeric(unlist(sdpred[10]))) +  ggtitle("Std October") + scale_fill_gradientn(name = "drhc (TJ/m^-2)",colours = c('navyblue', 'darkmagenta', 'darkorange1'), limits = c(0, 0.005)) +  theme(legend.position = "bottom", axis.title.x=element_blank(), axis.title.y=element_blank())
+grid.arrange(plot1, plot2, ncol=2)  
+
+
+mean_mth <- lapply(mthpred, mean)
+mean_std <- lapply(sdpred, mean)
+plot1 <- ggplot(data = data.frame(x=1:12,y=unlist(mean_mth)), aes(x=x,y=y)) + geom_line() + labs(title="Mean over region ", x ="Month", y = "mean drhc (TJ/m^-2)") 
+plot2 <- ggplot(data = data.frame(x=1:12,y=unlist(mean_std)), aes(x=x,y=y)) + geom_line() + labs( x ="Month", y = "std drhc (TJ/m^-2)") 
+grid.arrange(plot1, plot2, nrow=2)  
+```
+
