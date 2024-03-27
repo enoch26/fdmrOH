@@ -1,0 +1,13 @@
+---
+title: "DOHC"
+output: 
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{DOHC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+# Mapping Ocean Heat Content from Synthetic Observations in Indian Ocean
+
