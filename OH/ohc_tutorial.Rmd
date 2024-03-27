@@ -11,6 +11,43 @@ vignette: >
 ---
 # Mapping Ocean Heat Content from Synthetic Observations in Indian Ocean
 
+Knowledge of the spatio-temporal evolution of ocean heat content (OHC) is essential 
+to our understanding of both past and future climate change. At global scales, ocean 
+heat uptake is a key element of the global energy and sea level budgets and provides 
+a powerful constraint on climate sensitivity and past climate forcings. At regional 
+scales, OHC changes are important to our understanding of climate variability and 
+for the development, initialization, and evaluation of seasonal-to-decadal prediction 
+systems.
+
+The world's oceans have a huge volume so even small changes in temperature can correspond 
+to large changes in energy. 90% of the excess energy trapped in the earth system by 
+anthropogenic greenhouse gas emissions goes into the oceans. 
+
+## Measuring Ocean Heat Content
+
+To measure heat content, we measure temperatures through the whole volume of the 
+upper oceans, with measurements at different depths as well as at different locations. 
+
+Historically, measurement of ocean temperature at depth have been obtained obtained using 
+a range of instrument deployed from ships. More recently, since the early 2000s, 
+autonomous robotic floats, known as Argo floats, have greatly increased the number 
+of available observations of the upper 2000m of the world’s oceans. These data sources
+provide profiles of ocean temperatures from the surface downwards. 
+
+## Tutorial Data Source
+
+This tutorial uses data from the MapEval4OceanHeat (ME4OH) project. The data
+are derived from a 1/10th of a degree latitude-longitude ocean simulation that has been 
+sub-sampled to real world observed locations. While the synthetic profile data are
+intended to be used to benchmark ocean heat mapping methods, the data are used in this
+tutorial as a case study for application of 4DModeller to map ocean heat content.
+
+In this tutorial we will use  point data of ocean heat for upper layers of the ocean 
+provided in the ME4OH data files (integrated temperature profiles from the surface down 
+to a depth of 306.25 m, multiplied by water density and heat capacity).
+
+The tutorial will use data from the Indian Ocean region. 
+
 ## Loading Data
 Here we load the Indian ocean shapefile. We smooth the boundary to make the mesh creation easier. 
 ```{r}
