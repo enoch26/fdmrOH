@@ -11,3 +11,70 @@ vignette: >
 ---
 # Mapping Ocean Heat Content from Synthetic Observations in Indian Ocean
 
+## Loading Data
+Here we load the Indian ocean shapefile. We smooth the boundary to make the mesh creation easier. 
+```{r}
+# Only for the first time 
+# fdmr::retrieve_tutorial_data(dataset = "indian_ocean")
+# fdmr::load_tutorial_data(dataset = "indian_ocean", 
+#                          filename = "indian_ocean.rds")
+ocean_sf <-
+  st_read(here::here("indian_ocean.shp"))
+# ocean_sf <- ocean_sf[as.numeric(st_area(ocean_sf)) > 50000]
+ocean_crs <- fm_crs(ocean_sf) 
+fm_crs(ocean_sf) <- NULL
+ocean_sf2 <- st_union(st_buffer(ocean_sf, 1.05))
+```
+
+We plot the Indian ocean to check the boundary. 
+```{r}
+ggplot() + geom_sf(data=ocean_sf2)
+
+```
+
+We convert into a sp object. 
+```{r}
+fm_crs(ocean_sf) <- ocean_crs
+ocean_sp <- as_Spatial(ocean_sf)
+```
+
+We regularly sample some points to put in the mesh builder in fdmr package to get a feeling of the parameter setting.
+```{r}
+ocean_pts <- st_sample(ocean_sf, size = 20*20,
+                       type = "regular")
+
+ocean_pts_sp <- as_Spatial(ocean_pts)
+
+colnames(ocean_pts_sp@coords) <- c("LONG", "LAT")
+```
+
+Here comes the mesh_builder function. We set the max edge and offset a bit larger to cater the computation. 
+```{r}
+fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
+                   max_edge = c(50,100),
+                   offset = c(50,100),
+                   # crs = fm_crs(ocean_pts_sp),
+                   cutoff = 1)
+```
+
+We create the outer boundary.
+```{r}
+ocean_bnd <- st_cast(
+  st_sf(geometry = fm_nonconvex_hull(ocean_sf2, 5)),
+  "POLYGON"
+)
+```
+
+
+We create the mesh for the Indian ocean with the outer boundary. 
+```{r}
+boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
+
+mesh <- fm_mesh_2d_inla(boundary = boundary,
+                        max.edge = c(5, 7),
+                        offset = c(3, 3),
+                        cutoff = 1)
+
+ggplot() + geom_sf(data = ocean_sf2) + gg(mesh)
+```
+
