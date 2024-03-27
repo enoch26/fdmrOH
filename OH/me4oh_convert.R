@@ -170,3 +170,24 @@ for (year in c(1979:2014)) {
     }
 
 }
+
+# An option to save as rds object
+i <- 0
+for (year in c(2005:2005)) {
+  for (month in c(1:12)) {
+    datestr <- sprintf("%04d%02d", year, month)
+    in_file <- file.path(in_dir, sprintf("ofam3-jra55.all.EN.4.1.1.f.profiles.g10.%s.update.extra.nc", datestr))
+    
+    print(in_file)
+    
+    if (i == 0){
+      df <- preprocess_me4oh_dohc(in_file)
+      i = i + 1
+    } else {
+      df2 <- preprocess_me4oh_dohc(in_file)
+      df <- rbind(df, df2)
+    }
+  }
+}
+
+saveRDS(df, file.path(out_dir, "me4_dohc.2005.rds"))
