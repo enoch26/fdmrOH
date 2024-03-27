@@ -1,8 +1,12 @@
 # Subsetting and preparing the dataset to use with INLA/inlabru
 
 ## Load the dataset
-data_path <- ''
-df <- readRDS(data_path, "me4_dohc.2005.rds")
+data_path <- ""
+file_name <- "me4_dohc.2005.rds"
+df <- readRDS(data_path, file_name)
+
+## Add variable time
+df$time <- base::sapply(df$month, as.integer)
 
 ## Define the ocean mask
 ocean_sf <-
