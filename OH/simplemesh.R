@@ -28,11 +28,11 @@ ocean_pts_sp <- as_Spatial(ocean_pts)
 
 colnames(ocean_pts_sp@coords) <- c("LONG", "LAT")
   
-fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
-                   max_edge = c(50,100),
-                   offset = c(50,100),
-                   # crs = fm_crs(ocean_pts_sp),
-                   cutoff = 1)
+# fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
+#                    max_edge = c(50,100),
+#                    offset = c(50,100),
+#                    # crs = fm_crs(ocean_pts_sp),
+#                    cutoff = 1)
 
 ocean_bnd <- st_cast(
   st_sf(geometry = fm_nonconvex_hull(ocean_sf2, 5)),
