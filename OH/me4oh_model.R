@@ -3,10 +3,10 @@ library(INLA)
 library(inlabru)
 
 # Load the final dataset
-data_path <- "Z:/ME4OH/Data/rds"
+data_path <- ""
 file_name <- "me4_dohc.2005.indian_ocean.rds"
 df_f <- readRDS(base::file.path(data_path, file_name))
-##load mesh (to be added)
+mesh <- readRDS(base::file.path(data_path, "mesh_5_7_1.rds"))
 
 # Convert to sp
 df_f$lat <- base::sapply(df_f$lat, as.numeric)
@@ -14,8 +14,8 @@ df_f$lon <- base::sapply(df_f$lon, as.numeric)
 sp::coordinates(df_f) <- c('lon', 'lat')
 
 # Priors
-prior_range <- NA
-prior_Pgt <- NA
+prior_range <- 25
+prior_Pgt <- 0.2
 
 # SPDE
 ohc_spde <- INLA::inla.spde2.pcmatern(mesh, prior.range = c(prior_range, prior_Pgt),
