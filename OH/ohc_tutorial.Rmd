@@ -66,7 +66,7 @@ ocean_bnd <- st_cast(
 ```
 
 We create the mesh for the Indian ocean with the outer boundary.
-We have removed small islands and we keep Madagasikara in the cutoff. We might do a Barrier model on a sphere in the future.  
+We remove Sri Lanka and keep Madagasikara in the cutoff. We might do a Barrier model on a sphere in the future.  
 ```{r}
 boundary <- fm_as_segm_list(list(ocean_sf2, ocean_bnd))
 
