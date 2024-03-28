@@ -95,7 +95,7 @@ colnames(ocean_pts_sp@coords) <- c("LONG", "LAT")
 ```
 
 Here comes the mesh_builder function. We set the max edge and offset a bit larger to cater the computation. 
-```{r}
+```{r eval=FALSE}
 fdmr::mesh_builder(spatial_data = as.data.frame(ocean_pts_sp),
                    max_edge = c(50,100),
                    offset = c(50,100),
@@ -130,7 +130,7 @@ ggplot() + geom_sf(data = ocean_sf2) + gg(mesh) + gg(data = me4pts, size=0.1)
 ## Model
 
 We considered one year of top layer DOHC (between 0 and 306.25 m depth) in 2005. Observations are indexed by the month of occurrence, resulting in 12 indices, which is equal to the number of time points. To pass the data to the function, we created a `SpatialPolygonsDataFrame` from a `data.frame`.
-```{r}
+```{r eval=FALSE}
 # Transform latitudes and longtiudes to numeric
 df_f$lat <- base::sapply(df_f$lat, as.numeric)
 df_f$lon <- base::sapply(df_f$lon, as.numeric)
@@ -148,7 +148,7 @@ To implement the SPDE approach, we defined the range un uncertainty priors. We a
 
 The process is assumed to be evolving temporally as an autoregressive process of the first order (AR1) with the probability of the temporal autocorrelation parameter be over 0 is 0.9.
 
-```{r}
+```{r eval=FALSE}
 prior_range <- 25
 prior_Pgt <- 0.2
   
@@ -162,7 +162,7 @@ rhoprior <- base::list(theta = base::list(prior = 'pccor1', param = c(0, 0.9)))
 ### Define the model formula
 
 We use a spatio-temporal model with only random effects.
-```{r}
+```{r eval=FALSE}
 model_formula <- dohc_L1 ~ -1 + f(
   main = coordinates,
   model = ohc_spde,
@@ -177,7 +177,7 @@ model_formula <- dohc_L1 ~ -1 + f(
 
 ### Fit the model
 
-```{r}
+```{r eval=FALSE}
 bru_model <- inlabru::bru(model_formula,
                           data = df_f,
                           family = "gaussian",
@@ -189,7 +189,7 @@ bru_model <- inlabru::bru(model_formula,
 ```
 
 ## Output
-```{r}
+```{r eval=FALSE}
 pred <- predict(bru_model)
 
 pred_mean <- pred$Predictor["mean"]

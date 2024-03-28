@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>DOHC</title>
+
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">DOHC</h1>
+
+
+
+<div id="mapping-ocean-heat-content-from-synthetic-observations-in-indian-ocean" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Mapping Ocean Heat Content from Synthetic Observations in Indian Ocean</h1>
+<p>Knowledge of the spatio-temporal evolution of ocean heat content (OHC) is essential
+to our understanding of both past and future climate change. At global scales, ocean
+heat uptake is a key element of the global energy and sea level budgets and provides
+a powerful constraint on climate sensitivity and past climate forcings. At regional
+scales, OHC changes are important to our understanding of climate variability and
+for the development, initialization, and evaluation of seasonal-to-decadal prediction
+systems.</p>
+<p>The world’s oceans have a huge volume so even small changes in temperature can correspond
+to large changes in energy. 90% of the excess energy trapped in the earth system by
+anthropogenic greenhouse gas emissions goes into the oceans.</p>
+<div id="measuring-ocean-heat-content" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Measuring Ocean Heat Content</h2>
+<p>To measure heat content, we measure temperatures through the whole volume of the
+upper oceans, with measurements at different depths as well as at different locations.</p>
+<p>Historically, measurement of ocean temperature at depth have been obtained obtained using
+a range of instrument deployed from ships. More recently, since the early 2000s,
+autonomous robotic floats, known as Argo floats, have greatly increased the number
+of available observations of the upper 2000m of the world’s oceans. These data sources
+provide profiles of ocean temperatures from the surface downwards.</p>
+</div>
+<div id="tutorial-data-source" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Tutorial Data Source</h2>
+<p>This tutorial uses data from the MapEval4OceanHeat (ME4OH) project. The data
+are derived from a 1/10th of a degree latitude-longitude ocean simulation that has been
+sub-sampled to real world observed locations. While the synthetic profile data are
+intended to be used to benchmark ocean heat mapping methods, the data are used in this
+tutorial as a case study for application of 4DModeller to map ocean heat content.</p>
+<p>In this tutorial we will use point data of ocean heat for upper layers of the ocean
+provided in the ME4OH data files (integrated temperature profiles from the surface down
+to a depth of 306.25 m, multiplied by water density and heat capacity).</p>
+<p>The tutorial will use data from the Indian Ocean region.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(INLA)</span></code></pre></div>
+<pre><code>## Warning: package &#39;INLA&#39; was built under R version 4.3.2</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre><code>## This is INLA_23.11.01 built 2023-11-01 19:07:36 UTC.
+##  - See www.r-inla.org/contact-us for how to get help.
+##  - List available models/likelihoods/etc with inla.list.models()
+##  - Use inla.doc(&lt;NAME&gt;) to access documentation</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">library</span>(inlabru)</span></code></pre></div>
+<pre><code>## Loading required package: fmesher</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code></pre></div>
+<pre><code>## Linking to GEOS 3.11.1, GDAL 3.6.4, PROJ 9.1.1; sf_use_s2() is TRUE</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">library</span>(sp)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code></pre></div>
+</div>
+<div id="loading-data" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Loading Data</h2>
+<p>Here we load the Indian ocean shapefile. We smooth the boundary to make the mesh creation easier.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Only for the first time </span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co"># fdmr::retrieve_tutorial_data(dataset = &quot;indian_ocean&quot;)</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co"># fdmr::load_tutorial_data(dataset = &quot;indian_ocean&quot;, </span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#                          filename = &quot;indian_ocean.rds&quot;)</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>ocean_sf <span class="ot">&lt;-</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="fu">st_read</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;OH&quot;</span>,<span class="st">&quot;indian_ocean.shp&quot;</span>))</span></code></pre></div>
+<pre><code>## Reading layer `indian_ocean&#39; from data source 
+##   `/home/s1872841/fdmrOH/OH/indian_ocean.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 1 feature and 1 field
+## Geometry type: POLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 20.00262 ymin: -60 xmax: 146.8982 ymax: 25.59738
+## Geodetic CRS:  WGS 84</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># ocean_sf &lt;- ocean_sf[as.numeric(st_area(ocean_sf)) &gt; 50000]</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>ocean_crs <span class="ot">&lt;-</span> <span class="fu">fm_crs</span>(ocean_sf) </span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">fm_crs</span>(ocean_sf) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>ocean_sf2 <span class="ot">&lt;-</span> <span class="fu">st_union</span>(<span class="fu">st_buffer</span>(ocean_sf, <span class="fl">1.05</span>))</span></code></pre></div>
+<p>We plot the Indian ocean to check if there is any issues.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data=</span>ocean_sf2)</span></code></pre></div>
+<pre><code>## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAADFBMVEUzMzNNTU3r6+v////+zB01AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEEUlEQVR4nO3djW4TRwBG0Wz3/d8ZCcc/sWfmrklwA5xPKojOlVlOnciExX3bbbm3//sCvvsAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUS6L/bffzRcH9LAigSQJEAigRQJIAiARQJoEgARQIoEkCRAIoEUCSAIgEUyQRo27ab7wDdA22nf96/AzT8EAN0OpgBbTugnwcToO0WaX97++e/Zn3/SfryrWfQCGjbAZ0PAK2TCdB2egXkdZBX0pUAigRQJIAiARQJoEgARQIoEkCRAIoEUCSAIgEUCaBIAEUCKBJAkQCKBFAkgCIBFAmgSABFAigSQJEAimQN5I+e10BuXgCUCaBIjgG5Bc8zaHoAaJ0AimQJ5HWQV9KZAIoEUCSAIgEUCaBIAEUCKBJAkQCKBFAkgCIBFAmgSABFAigSQJEAigRQJIAiARQJoEgARQIoEkCRAIpkAuRd8C4HQyDvgnc9mH6IATodzIC8C977wQTIu+Dd7Qxwfm+u0w92z6B7oP0iA+h0AGidTIC8C97lYAg02Csv6jslgCIBFAmgSABFAigSQJEAigRQJIAiARQJoEgARQIoEkCRAIoEUCSAIgEUCaBIAEUCKBJAkQCKBFAkgCKZArkF7/1gArS5ger9YAy0ucPsfABonYyBtrt7FN2C9/EWvFscz6CPQBelzW3Ap4MR0O4ZdD1YAXkd5JV0JoAiARQJoEgARQIoEkCRAIoEUCSAIgEUCaBIAEUCKBJAkQCKBFAkgCIBFAmgSABFAigSQJEAigRQJBMgb/J2ORgCeZO368EUaAf082AC5B7F88EYaPMhdj64A/pw55Rb8K7zSXp2AGidjIG8DroejIEe98qL+k4JoEgARQIoEkCRHAb6sAP135YA+vxjfPHP+IclgD7/GP/2AMUAxZ4AevyN7Ciq5MCjRLJ1dDjpCz4ONPhSyCC6/4rtLzzKOjn/qhfR8eTABT/3IVZAj39pevAI+4Fk9RPlr/7mX1XSF/wUUD3YIaD8b7Zv6+QJoMXj/A6g2yubBQn0+McCo5/ma55Bqws+n30h0Hb5dvJg234AaH8d0PKC7y/280D92WP0t8on1/UKoPUFbwcv+CuBbo//CKAjF/wE0OP/tWVU7ZG87nXQ+oK3u3R2MV5JxwDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMUAxQDFAMV+AIwxLmhTWfC1AAAAAElFTkSuQmCC" /><!-- --></p>
+<p>We convert into a sp object.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">fm_crs</span>(ocean_sf) <span class="ot">&lt;-</span> ocean_crs</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>ocean_sp <span class="ot">&lt;-</span> <span class="fu">as_Spatial</span>(ocean_sf)</span></code></pre></div>
+<p>We regularly sample some points (20$$20) to put in the mesh builder function under the fdmr package to get a feeling of the parameter setting for the mesh.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>ocean_pts <span class="ot">&lt;-</span> <span class="fu">st_sample</span>(ocean_sf, <span class="at">size =</span> <span class="dv">20</span><span class="sc">*</span><span class="dv">20</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">&quot;regular&quot;</span>)</span></code></pre></div>
+<pre><code>## although coordinates are longitude/latitude, st_sample assumes that they are
+## planar</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>ocean_pts_sp <span class="ot">&lt;-</span> <span class="fu">as_Spatial</span>(ocean_pts)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="fu">colnames</span>(ocean_pts_sp<span class="sc">@</span>coords) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;LONG&quot;</span>, <span class="st">&quot;LAT&quot;</span>)</span></code></pre></div>
+<p>Here comes the mesh_builder function. We set the max edge and offset a bit larger to cater the computation.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>fdmr<span class="sc">::</span><span class="fu">mesh_builder</span>(<span class="at">spatial_data =</span> <span class="fu">as.data.frame</span>(ocean_pts_sp),</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>                   <span class="at">max_edge =</span> <span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">100</span>),</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>                   <span class="at">offset =</span> <span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">100</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>                   <span class="co"># crs = fm_crs(ocean_pts_sp),</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>                   <span class="at">cutoff =</span> <span class="dv">1</span>)</span></code></pre></div>
+<p>We create the outer boundary.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>ocean_bnd <span class="ot">&lt;-</span> <span class="fu">st_cast</span>(</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="fu">st_sf</span>(<span class="at">geometry =</span> <span class="fu">fm_nonconvex_hull</span>(ocean_sf2, <span class="dv">5</span>)),</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="st">&quot;POLYGON&quot;</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>)</span></code></pre></div>
+<p>We create the mesh for the Indian ocean with the outer boundary.
+We remove Sri Lanka and keep Madagasikara in the cutoff. We might do a Barrier model on a sphere in the future.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>boundary <span class="ot">&lt;-</span> <span class="fu">fm_as_segm_list</span>(<span class="fu">list</span>(ocean_sf2, ocean_bnd))</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>mesh <span class="ot">&lt;-</span> <span class="fu">fm_mesh_2d_inla</span>(<span class="at">boundary =</span> boundary,</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>                        <span class="at">max.edge =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">7</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>                        <span class="at">offset =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>),</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>                        <span class="at">cutoff =</span> <span class="dv">1</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>meshrds <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;mesh_5_7_1.rds&quot;</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>me4 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;me4_dohc.2005.indian_ocean.rds&quot;</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>me4pts <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(me4, <span class="at">coords=</span><span class="fu">c</span>(<span class="st">&quot;lon&quot;</span>,<span class="st">&quot;lat&quot;</span>))</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data =</span> ocean_sf2) <span class="sc">+</span> <span class="fu">gg</span>(mesh) <span class="sc">+</span> <span class="fu">gg</span>(<span class="at">data =</span> me4pts, <span class="at">size=</span><span class="fl">0.1</span>)</span></code></pre></div>
+<pre><code>## Warning in grid.Call.graphics(C_path, x$x, x$y, index, switch(x$rule, winding =
+## 1L, : Path drawing not available for this device</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="model" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Model</h2>
+<p>We considered one year of top layer DOHC (between 0 and 306.25 m depth) in 2005. Observations are indexed by the month of occurrence, resulting in 12 indices, which is equal to the number of time points. To pass the data to the function, we created a <code>SpatialPolygonsDataFrame</code> from a <code>data.frame</code>.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="co"># Transform latitudes and longtiudes to numeric</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>df_f<span class="sc">$</span>lat <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">sapply</span>(df_f<span class="sc">$</span>lat, as.numeric)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>df_f<span class="sc">$</span>lon <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">sapply</span>(df_f<span class="sc">$</span>lon, as.numeric)</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="co"># Add sp coordinates</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>sp<span class="sc">::</span><span class="fu">coordinates</span>(df_f) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;lon&#39;</span>, <span class="st">&#39;lat&#39;</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a><span class="co"># Determine the group size</span></span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a>n_time <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">as.integer</span>(base<span class="sc">::</span><span class="fu">length</span>(base<span class="sc">::</span><span class="fu">unique</span>(df_f<span class="sc">@</span>data<span class="sc">$</span>time)))</span></code></pre></div>
+<div id="prior-selection" class="section level3" number="1.4.1">
+<h3><span class="header-section-number">1.4.1</span> Prior selection</h3>
+<p>To implement the SPDE approach, we defined the range un uncertainty priors. We assume that the probability of process spatial range (physically, a distance where correlation between two observations falls to 0.1) being under 25 degrees in latitude is 0.2. We also set the probability to 0.1 that the marginal standard deviation of the process exceeds 1.</p>
+<p>The process is assumed to be evolving temporally as an autoregressive process of the first order (AR1) with the probability of the temporal autocorrelation parameter be over 0 is 0.9.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>prior_range <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>prior_Pgt <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  </span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co"># Define the SPDE</span></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>ohc_spde <span class="ot">&lt;-</span> INLA<span class="sc">::</span><span class="fu">inla.spde2.pcmatern</span>(mesh, <span class="at">prior.range =</span> <span class="fu">c</span>(prior_range, prior_Pgt), <span class="at">prior.sigma =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.1</span>))</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a><span class="co"># Define temporal parameter</span></span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>rhoprior <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">list</span>(<span class="at">theta =</span> base<span class="sc">::</span><span class="fu">list</span>(<span class="at">prior =</span> <span class="st">&#39;pccor1&#39;</span>, <span class="at">param =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.9</span>)))</span></code></pre></div>
+</div>
+<div id="define-the-model-formula" class="section level3" number="1.4.2">
+<h3><span class="header-section-number">1.4.2</span> Define the model formula</h3>
+<p>We use a spatio-temporal model with only random effects.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>model_formula <span class="ot">&lt;-</span> dohc_L1 <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> <span class="fu">f</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  <span class="at">main =</span> coordinates,</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="at">model =</span> ohc_spde,</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>  <span class="at">group =</span> time,</span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>  <span class="at">ngroup =</span> n_time,</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>  <span class="at">control.group =</span> <span class="fu">list</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">&#39;ar1&#39;</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>    <span class="at">hyper =</span> rhoprior</span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>  )</span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="fit-the-model" class="section level3" number="1.4.3">
+<h3><span class="header-section-number">1.4.3</span> Fit the model</h3>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>bru_model <span class="ot">&lt;-</span> inlabru<span class="sc">::</span><span class="fu">bru</span>(model_formula,</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>                          <span class="at">data =</span> df_f,</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>                          <span class="at">family =</span> <span class="st">&quot;gaussian&quot;</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>                          <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>                            <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>                            <span class="at">bru_verbose =</span> <span class="dv">4</span></span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>                          )</span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="output" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Output</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(bru_model)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>pred_mean <span class="ot">&lt;-</span> pred<span class="sc">$</span>Predictor[<span class="st">&quot;mean&quot;</span>]</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>pred_sd <span class="ot">&lt;-</span> pred<span class="sc">$</span>Predictor[<span class="st">&quot;sd&quot;</span>]</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>mthpred <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>sdpred <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>) {</span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>  mthpred[i]<span class="ot">&lt;-</span><span class="fu">list</span>(pred_mean[((<span class="dv">1</span><span class="sc">+</span><span class="dv">1511</span><span class="sc">*</span>(i<span class="dv">-1</span>))<span class="sc">:</span>(<span class="dv">1511</span><span class="sc">*</span>i)),])</span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>  sdpred[i]<span class="ot">&lt;-</span><span class="fu">list</span>(pred_sd[((<span class="dv">1</span><span class="sc">+</span><span class="dv">1511</span><span class="sc">*</span>(i<span class="dv">-1</span>))<span class="sc">:</span>(<span class="dv">1511</span><span class="sc">*</span>i)),])</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a>}</span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span><span class="fu">gg</span>(mesh, <span class="at">color =</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(mthpred[<span class="dv">3</span>]))) <span class="sc">+</span>  <span class="fu">ggtitle</span>(<span class="st">&quot;Mean March&quot;</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradientn</span>(<span class="at">name =</span> <span class="st">&quot;drhc (TJ/m^-2)&quot;</span>,<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&#39;navyblue&#39;</span>, <span class="st">&#39;darkmagenta&#39;</span>, <span class="st">&#39;darkorange1&#39;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.33</span>, <span class="fl">0.38</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;bottom&quot;</span>, <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(), <span class="at">axis.title.y=</span><span class="fu">element_blank</span>()) </span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span><span class="fu">gg</span>(mesh, <span class="at">color =</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(mthpred[<span class="dv">10</span>]))) <span class="sc">+</span>  <span class="fu">ggtitle</span>(<span class="st">&quot;Mean October&quot;</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradientn</span>(<span class="at">name =</span> <span class="st">&quot;drhc (TJ/m^-2)&quot;</span>,<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&#39;navyblue&#39;</span>, <span class="st">&#39;darkmagenta&#39;</span>, <span class="st">&#39;darkorange1&#39;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="fl">0.33</span>, <span class="fl">0.38</span>)) <span class="sc">+</span>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(), <span class="at">axis.title.y=</span><span class="fu">element_blank</span>())</span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a><span class="fu">grid.arrange</span>(plot1, plot2, <span class="at">ncol=</span><span class="dv">2</span>)  </span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span><span class="fu">gg</span>(mesh, <span class="at">color =</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(sdpred[<span class="dv">3</span>]))) <span class="sc">+</span>  <span class="fu">ggtitle</span>(<span class="st">&quot;Std March&quot;</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradientn</span>(<span class="at">name =</span> <span class="st">&quot;drhc (TJ/m^-2)&quot;</span>,<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&#39;navyblue&#39;</span>, <span class="st">&#39;darkmagenta&#39;</span>, <span class="st">&#39;darkorange1&#39;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.005</span>)) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">&quot;bottom&quot;</span>, <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(), <span class="at">axis.title.y=</span><span class="fu">element_blank</span>()) </span>
+<span id="cb28-17"><a href="#cb28-17" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>()<span class="sc">+</span><span class="fu">gg</span>(mesh, <span class="at">color =</span> <span class="fu">as.numeric</span>(<span class="fu">unlist</span>(sdpred[<span class="dv">10</span>]))) <span class="sc">+</span>  <span class="fu">ggtitle</span>(<span class="st">&quot;Std October&quot;</span>) <span class="sc">+</span> <span class="fu">scale_fill_gradientn</span>(<span class="at">name =</span> <span class="st">&quot;drhc (TJ/m^-2)&quot;</span>,<span class="at">colours =</span> <span class="fu">c</span>(<span class="st">&#39;navyblue&#39;</span>, <span class="st">&#39;darkmagenta&#39;</span>, <span class="st">&#39;darkorange1&#39;</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.005</span>)) <span class="sc">+</span>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>, <span class="at">axis.title.x=</span><span class="fu">element_blank</span>(), <span class="at">axis.title.y=</span><span class="fu">element_blank</span>())</span>
+<span id="cb28-18"><a href="#cb28-18" tabindex="-1"></a><span class="fu">grid.arrange</span>(plot1, plot2, <span class="at">ncol=</span><span class="dv">2</span>)  </span>
+<span id="cb28-19"><a href="#cb28-19" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" tabindex="-1"></a></span>
+<span id="cb28-21"><a href="#cb28-21" tabindex="-1"></a>mean_mth <span class="ot">&lt;-</span> <span class="fu">lapply</span>(mthpred, mean)</span>
+<span id="cb28-22"><a href="#cb28-22" tabindex="-1"></a>mean_std <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sdpred, mean)</span>
+<span id="cb28-23"><a href="#cb28-23" tabindex="-1"></a>plot1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,<span class="at">y=</span><span class="fu">unlist</span>(mean_mth)), <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Mean over region &quot;</span>, <span class="at">x =</span><span class="st">&quot;Month&quot;</span>, <span class="at">y =</span> <span class="st">&quot;mean drhc (TJ/m^-2)&quot;</span>) </span>
+<span id="cb28-24"><a href="#cb28-24" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>,<span class="at">y=</span><span class="fu">unlist</span>(mean_std)), <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y)) <span class="sc">+</span> <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">labs</span>( <span class="at">x =</span><span class="st">&quot;Month&quot;</span>, <span class="at">y =</span> <span class="st">&quot;std drhc (TJ/m^-2)&quot;</span>) </span>
+<span id="cb28-25"><a href="#cb28-25" tabindex="-1"></a><span class="fu">grid.arrange</span>(plot1, plot2, <span class="at">nrow=</span><span class="dv">2</span>)  </span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
